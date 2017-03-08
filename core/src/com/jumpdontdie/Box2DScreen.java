@@ -7,7 +7,11 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
+import com.badlogic.gdx.physics.box2d.Contact;
+import com.badlogic.gdx.physics.box2d.ContactImpulse;
+import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.Fixture;
+import com.badlogic.gdx.physics.box2d.Manifold;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 
@@ -24,17 +28,66 @@ public class Box2DScreen extends BaseScreen{
     private OrthographicCamera camera;
     private Body minijoeBody, sueloBody, pinchoBody;
     private Fixture minijoeFixture,sueloFixture, pinchoFixture;
+    private boolean debeSaltar,joeSaltando, joeVivo=true;
+
 
     @Override
     public void show() {
         world=new World(new Vector2(0,-10),true);
         renderer=new Box2DDebugRenderer();
-        camera =new OrthographicCamera(7.11f, 4);
+        camera =new OrthographicCamera(16, 9);
         camera.translate(0,1);
+
+        world.setContactListener(new ContactListener() {
+            @Override
+            public void beginContact(Contact contact) {
+                Fixture fixtureA=contact.getFixtureA(), fixtureB=contact.getFixtureB();
+
+                if((fixtureA.getUserData().equals("player") && fixtureB.getUserData().equals("floor")) ||
+                        (fixtureA.getUserData().equals("floor") && fixtureB.getUserData().equals("player")) ){
+                    if(Gdx.input.isTouched()){
+                        debeSaltar=true;
+                    }
+
+                    joeSaltando=false;
+                }
+
+                if((fixtureA.getUserData().equals("player") && fixtureB.getUserData().equals("spike")) ||
+                        (fixtureA.getUserData().equals("spike") && fixtureB.getUserData().equals("player")) ){
+
+                        joeVivo=false;
+
+                }
+            }
+
+            @Override
+            public void endContact(Contact contact) {
+                Fixture fixtureA=contact.getFixtureA(), fixtureB=contact.getFixtureB();
+                if (fixtureA==minijoeFixture && fixtureB==sueloFixture){
+
+                    joeSaltando= true;
+                }
+                if (fixtureB==minijoeFixture && fixtureA==sueloFixture){
+                    joeSaltando=true;
+                }
+            }
+
+            @Override
+            public void preSolve(Contact contact, Manifold oldManifold) {
+
+            }
+
+            @Override
+            public void postSolve(Contact contact, ContactImpulse impulse) {
+
+            }
+        });
 
         minijoeBody=world.createBody(createJoeBodyDef());
         sueloBody=world.createBody(createSueloBodyDef());
-        pinchoBody=world.createBody(createPinchoBodyDef(0.5f));
+        pinchoBody=world.createBody(createPinchoBodyDef(6f));
+
+
 
         //crear jugador
         PolygonShape minijoeShape= new PolygonShape();
@@ -50,6 +103,10 @@ public class Box2DScreen extends BaseScreen{
 
         //crear pincho
         pinchoFixture=createPinchoFixture(pinchoBody);
+
+        minijoeFixture.setUserData("player");
+        sueloFixture.setUserData("floor");
+        pinchoFixture.setUserData("spike");
 
     }
 
@@ -67,7 +124,7 @@ public class Box2DScreen extends BaseScreen{
 
     private BodyDef createJoeBodyDef() {
         BodyDef def= new BodyDef();
-        def.position.set(0,10);
+        def.position.set(0,0);
         def.type = BodyDef.BodyType.DynamicBody;
         return def;
     }
@@ -100,8 +157,30 @@ public class Box2DScreen extends BaseScreen{
     @Override
     public void render(float delta) {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
+        if (debeSaltar){
+           debeSaltar =false;
+            saltar();
+        }
+
+        if (Gdx.input.justTouched() && !joeSaltando){
+            debeSaltar=true;
+        }
+
+        //comprobar si el jugador está vivo
+        if(joeVivo) {
+            float velecidadY = minijoeBody.getLinearVelocity().y;
+            minijoeBody.setLinearVelocity(8, velecidadY);
+        }
+
+
         world.step(delta, 6,2);
         camera.update();
         renderer.render(world, camera.combined);
+    }
+
+    private void saltar(){
+        Vector2 position =minijoeBody.getPosition();
+        minijoeBody.applyLinearImpulse(0,7,position.x,position.y,true);
     }
 }
