@@ -7,6 +7,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
+import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.ContactListener;
@@ -90,9 +91,10 @@ public class Box2DScreen extends BaseScreen{
 
 
         //crear jugador
-        PolygonShape minijoeShape= new PolygonShape();
-        minijoeShape.setAsBox(0.5f,0.5f);
+        CircleShape minijoeShape= new CircleShape();
+        minijoeShape.setRadius(0.5f);
         minijoeFixture=minijoeBody.createFixture(minijoeShape,1);
+        minijoeFixture.setFriction(2);
         minijoeShape.dispose();
 
         //crear suelo

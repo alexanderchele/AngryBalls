@@ -1,6 +1,5 @@
 package com.jumpdontdie.entities;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Vector2;
@@ -12,6 +11,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 
 import static com.jumpdontdie.Constants.PIXELS_IN_METER;
+import static com.jumpdontdie.Constants.PLAYER_SPEED;
 
 /**
  * Created by Alexander Caballero on 9/3/2017.
@@ -63,18 +63,22 @@ public class PlayerEntity extends Actor {
 
     @Override
     public void act(float delta) {
-        if(Gdx.input.justTouched() || mustJump){
+        if(mustJump){
             mustJump=false;
             jump();
         }
 
         if (alive){
             float speedY = body.getLinearVelocity().y;
-            body.setLinearVelocity(8, speedY);
+            body.setLinearVelocity(PLAYER_SPEED, speedY);
+        }
+
+        if(jumping){
+            body.applyForceToCenter(0,-7*1.15f,true);
         }
     }
 
-    private void jump() {
+    public void jump() {
         if(!jumping && alive) {
             jumping=true;
             Vector2 position = body.getPosition();

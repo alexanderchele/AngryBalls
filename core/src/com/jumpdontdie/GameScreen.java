@@ -1,6 +1,8 @@
 package com.jumpdontdie;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
@@ -10,6 +12,7 @@ import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.Manifold;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.jumpdontdie.entities.FloorEntity;
 import com.jumpdontdie.entities.PlayerEntity;
@@ -29,8 +32,15 @@ public class GameScreen extends BaseScreen {
     private List<FloorEntity> floorList =new ArrayList<FloorEntity>();
     private List<SpikeEntity> spikeList = new ArrayList<SpikeEntity>();
 
-    public GameScreen(MainGame Game) {
+    private Sound jumpSound, dieSound;
+    private Music bgMusic;
+
+    public GameScreen(final MainGame Game) {
         super( Game);
+        jumpSound=Game.getManager().get("jump.ogg");
+        dieSound=Game.getManager().get("die.ogg");
+        bgMusic=Game.getManager().get("song.ogg");
+
         stage =new Stage(new FitViewport(640,360));
         world =new World(new Vector2(0,-10),true);
 
@@ -45,12 +55,30 @@ public class GameScreen extends BaseScreen {
                 if(areaCollided(contact,"player","floor")){
                     player.setJumping(false);
                     if(Gdx.input.isTouched()){
+                        jumpSound.play();
                         player.setMustJump(true);
                     }
                 }
 
                 if(areaCollided(contact,"player","spike")){
-                    player.setAlive(false);
+                    if (player.isAlive()) {
+                        player.setAlive(false);
+                        dieSound.play();
+                        bgMusic.stop();
+                        System.out.println("GAME OVER");
+
+                        stage.addAction(
+                                Actions.sequence(
+                                        Actions.delay(1.5f),
+                                        Actions.run(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                Game.setScreen(Game.gameOverScreen);
+                                            }
+                                        })
+                                )
+                        );
+                    }
                 }
             }
 
@@ -80,8 +108,14 @@ public class GameScreen extends BaseScreen {
         Texture spikeTexture=Game.getManager().get("spike.png");
         player=new PlayerEntity(world, playerTexture, new Vector2(1.5f,2f));
 
+        //Agregar suelo y pinchos
         floorList.add(new FloorEntity(world,floorTexture,overfloorTexture,0,1000,1));
+        floorList.add(new FloorEntity(world,floorTexture,overfloorTexture,12,10,2));
+        floorList.add(new FloorEntity(world,floorTexture,overfloorTexture,30,10,2));
         spikeList.add(new SpikeEntity(world,spikeTexture,6,1));
+        spikeList.add(new SpikeEntity(world,spikeTexture,18,2));
+        spikeList.add(new SpikeEntity(world,spikeTexture,35,2));
+        spikeList.add(new SpikeEntity(world,spikeTexture,50,1));
         stage.addActor(player);
 
         for (FloorEntity floor : floorList){
@@ -90,10 +124,14 @@ public class GameScreen extends BaseScreen {
         for (SpikeEntity spike : spikeList){
             stage.addActor(spike);
         }
+
+        bgMusic.setVolume(0.75f);
+        bgMusic.play();
     }
 
     @Override
     public void hide() {
+
         player.detach();
         player.remove();
 
@@ -111,6 +149,15 @@ public class GameScreen extends BaseScreen {
     public void render(float delta) {
         Gdx.gl.glClearColor(0.4f,0.5f,0.8f,1f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
+        if(player.getX()>150 && player.isAlive()){
+            stage.getCamera().translate(Constants.PLAYER_SPEED*delta*Constants.PIXELS_IN_METER,0,0);
+        }
+        if(Gdx.input.justTouched()){
+            jumpSound.play();
+            player.jump();
+        }
+
         stage.act();
       world.step(delta,6,2);
         stage.draw();
