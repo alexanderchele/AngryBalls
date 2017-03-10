@@ -4,6 +4,10 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Contact;
+import com.badlogic.gdx.physics.box2d.ContactImpulse;
+import com.badlogic.gdx.physics.box2d.ContactListener;
+import com.badlogic.gdx.physics.box2d.Manifold;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.FitViewport;
@@ -30,6 +34,41 @@ public class GameScreen extends BaseScreen {
         stage =new Stage(new FitViewport(640,360));
         world =new World(new Vector2(0,-10),true);
 
+        world.setContactListener(new ContactListener() {
+            private boolean areaCollided(Contact contact,Object userA, Object userB){
+                    return (contact.getFixtureA().getUserData().equals(userA) && contact.getFixtureB().getUserData().equals(userB)) ||
+                            (contact.getFixtureA().getUserData().equals(userB) && contact.getFixtureB().getUserData().equals(userA));
+            }
+
+            @Override
+            public void beginContact(Contact contact) {
+                if(areaCollided(contact,"player","floor")){
+                    player.setJumping(false);
+                    if(Gdx.input.isTouched()){
+                        player.setMustJump(true);
+                    }
+                }
+
+                if(areaCollided(contact,"player","spike")){
+                    player.setAlive(false);
+                }
+            }
+
+            @Override
+            public void endContact(Contact contact) {
+
+            }
+
+            @Override
+            public void preSolve(Contact contact, Manifold oldManifold) {
+
+            }
+
+            @Override
+            public void postSolve(Contact contact, ContactImpulse impulse) {
+
+            }
+        });
 
 }
 
@@ -39,7 +78,7 @@ public class GameScreen extends BaseScreen {
         Texture floorTexture=Game.getManager().get("floor.png");
         Texture overfloorTexture=Game.getManager().get("overfloor.png");
         Texture spikeTexture=Game.getManager().get("spike.png");
-        player=new PlayerEntity(world, playerTexture, new Vector2(1.5f,1.5f));
+        player=new PlayerEntity(world, playerTexture, new Vector2(1.5f,2f));
 
         floorList.add(new FloorEntity(world,floorTexture,overfloorTexture,0,1000,1));
         spikeList.add(new SpikeEntity(world,spikeTexture,6,1));
@@ -73,7 +112,7 @@ public class GameScreen extends BaseScreen {
         Gdx.gl.glClearColor(0.4f,0.5f,0.8f,1f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         stage.act();
-      //  world.step(delta,6,2);
+      world.step(delta,6,2);
         stage.draw();
     }
 

@@ -15,7 +15,7 @@ import com.jumpdontdie.MainGame;
 public class Scene2DScreen extends BaseScreen {
     public Scene2DScreen(MainGame Game) {
         super(Game);
-        texturaJugador=new Texture("bola1.png");
+        texturaJugador=new Texture("player.png");
         texturaPinchos=new Texture("spike.png");
         regionPinchos=new TextureRegion(texturaPinchos,0,64,128,64);
     }
