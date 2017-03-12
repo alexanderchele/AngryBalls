@@ -19,49 +19,79 @@ public class GameOverScreen extends BaseScreen{
     private Stage stage;
     private Skin skin;
     private Image gameover;
-    private TextButton retry;
+    private TextButton retry,menu;
     public GameOverScreen(final MainGame Game) {
         super(Game);
-        stage= new Stage(new FitViewport(640,360));
-        skin=new Skin(Gdx.files.internal("skin/uiskin.json"));
-        gameover=new Image(Game.getManager().get("gameover.png",Texture.class));
-        retry=new TextButton("Jugar de nuevo",skin);
+
+
+
+        stage = new Stage(new FitViewport(640, 360));
+
+
+        skin = new Skin(Gdx.files.internal("skin/uiskin.json"));
+
+
+        retry = new TextButton("Jugar de nuevo", skin);
+        menu = new TextButton("Menu", skin);
+
+
+        gameover = new Image(Game.getManager().get("gameover.png", Texture.class));
 
         retry.addCaptureListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
+
                 Game.setScreen(Game.gameScreen);
             }
         });
 
+        menu.addCaptureListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
 
-        gameover.setPosition(320-gameover.getWidth()/2,320-gameover.getHeight());
-        retry.setSize(200,100);
-        retry.setPosition(220,50);
+                Game.setScreen(Game.menuScreen);
+            }
+        });
+
+
+        gameover.setPosition(320 - gameover.getWidth() / 2, 320 - gameover.getHeight());
+        retry.setSize(200, 80);
+        menu.setSize(200, 80);
+        retry.setPosition(60, 50);
+        menu.setPosition(380, 50);
+
+
         stage.addActor(retry);
         stage.addActor(gameover);
+        stage.addActor(menu);
     }
 
     @Override
     public void show() {
+
         Gdx.input.setInputProcessor(stage);
     }
 
     @Override
     public void hide() {
+
         Gdx.input.setInputProcessor(null);
     }
 
     @Override
     public void dispose() {
+        // Dispose assets.
+        skin.dispose();
         stage.dispose();
     }
 
     @Override
     public void render(float delta) {
-        Gdx.gl.glClearColor(0.4f,0.5f,0.8f,1f);
+        // Just render things.
+        Gdx.gl.glClearColor(0.4f, 0.5f, 0.8f, 1f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         stage.act();
         stage.draw();
     }
+
 }

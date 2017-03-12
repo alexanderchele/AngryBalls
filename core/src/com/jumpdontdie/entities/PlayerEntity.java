@@ -1,7 +1,10 @@
 package com.jumpdontdie.entities;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
@@ -9,9 +12,7 @@ import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Actor;
-
-import static com.jumpdontdie.Constants.PIXELS_IN_METER;
-import static com.jumpdontdie.Constants.PLAYER_SPEED;
+import com.jumpdontdie.Constants;
 
 /**
  * Created by Alexander Caballero on 9/3/2017.
@@ -19,77 +20,104 @@ import static com.jumpdontdie.Constants.PLAYER_SPEED;
 
 public class PlayerEntity extends Actor {
 
+
     private Texture texture;
+
+
     private World world;
+
+
     private Body body;
-    private Fixture  fixture;
-    private boolean alive=true;
-    private boolean jumping=false;
 
-    public boolean isMustJump() {
-        return mustJump;
-    }
 
-    public void setMustJump(boolean mustJump) {
-        this.mustJump = mustJump;
-    }
+    private Fixture fixture;
 
-    private boolean mustJump=false;
 
-    public PlayerEntity(World world, Texture texture, Vector2 position){
-        this.world=world;
-        this.texture=texture;
+    private boolean alive = true;
 
-        BodyDef def= new BodyDef();
+
+
+    private boolean jumping = false;
+
+
+    private boolean mustJump = false;
+
+    public TextureRegion[] dudeFrames;
+    public Animation dudeAnimation;
+
+    public PlayerEntity(World world, Texture texture, Vector2 position) {
+        this.world = world;
+        this.texture = texture;
+
+
+
+        BodyDef def = new BodyDef();
         def.position.set(position);
         def.type = BodyDef.BodyType.DynamicBody;
-        body=world.createBody(def);
+        body = world.createBody(def);
 
-        CircleShape box= new CircleShape();
+
+        CircleShape box = new CircleShape();
         box.setRadius(0.5f);
-        fixture=body.createFixture(box,1);
+        fixture = body.createFixture(box, 3);
         fixture.setUserData("player");
         box.dispose();
 
-        setSize(PIXELS_IN_METER, PIXELS_IN_METER);
+
+        setSize(Constants.PIXELS_IN_METER, Constants.PIXELS_IN_METER);
     }
 
     @Override
     public void draw(Batch batch, float parentAlpha) {
-        setPosition((body.getPosition().x-0.5f)*PIXELS_IN_METER,
-                (body.getPosition().y-0.5f)*PIXELS_IN_METER);
-        batch.draw(texture,getX(),getY(),getWidth(),getHeight());
+
+        setPosition((body.getPosition().x - 0.5f) * Constants.PIXELS_IN_METER,
+                (body.getPosition().y - 0.5f) * Constants.PIXELS_IN_METER);
+        batch.draw(texture, getX(), getY(), getWidth(), getHeight());
     }
 
     @Override
     public void act(float delta) {
-        if(mustJump){
-            mustJump=false;
+
+        if (Gdx.input.justTouched()) {
             jump();
         }
 
-        if (alive){
-            float speedY = body.getLinearVelocity().y;
-            body.setLinearVelocity(PLAYER_SPEED, speedY);
+
+        if (mustJump) {
+            mustJump = false;
+            jump();
         }
 
-        if(jumping){
-            body.applyForceToCenter(0,-7*1.15f,true);
+
+        if (alive) {
+
+            float speedY = body.getLinearVelocity().y;
+            body.setLinearVelocity(Constants.PLAYER_SPEED, speedY);
+        }
+
+
+        if (jumping) {
+            body.applyForceToCenter(0, -Constants.IMPULSE_JUMP * 1.15f, true);
         }
     }
 
     public void jump() {
-        if(!jumping && alive) {
-            jumping=true;
+
+        if (!jumping && alive) {
+            jumping = true;
+
+
             Vector2 position = body.getPosition();
-            body.applyLinearImpulse(0, 7, position.x, position.y, true);
+            body.applyLinearImpulse(0, Constants.IMPULSE_JUMP, position.x, position.y, true);
         }
     }
 
-    public void detach(){
+    public void detach() {
         body.destroyFixture(fixture);
-        world.destroyBody(body );
+        world.destroyBody(body);
     }
+
+
 
     public boolean isAlive() {
         return alive;
@@ -99,11 +127,16 @@ public class PlayerEntity extends Actor {
         this.alive = alive;
     }
 
-    public boolean isJumping() {
-        return jumping;
-    }
-
     public void setJumping(boolean jumping) {
         this.jumping = jumping;
+    }
+
+    public void setMustJump(boolean mustJump) {
+        this.mustJump = mustJump;
+    }
+
+    public static void Animacion(float delta) {
+
+
     }
 }
