@@ -9,7 +9,7 @@ import com.badlogic.gdx.graphics.Texture;
 public class MainGame extends Game {
 	private AssetManager manager;
 	//registrar pantallas
-	public BaseScreen loadingScreen, menuScreen, gameScreen, gameOverScreen, playerScreen;
+	public BaseScreen loadingScreen, menuScreen, gameScreen, gameOverScreen, playerScreen, nextLevel, gameScreenL2,selectLevel;
 
 
 	@Override
@@ -21,6 +21,7 @@ public class MainGame extends Game {
 		manager.load("bola1.png", Texture.class);
 		manager.load("bola2.png", Texture.class);
 		manager.load("bola3.png", Texture.class);
+		manager.load("bandera.png", Texture.class);
 		manager.load("logo.png", Texture.class);
 		manager.load("die.ogg", Sound.class);
 		manager.load("jump.ogg", Sound.class);
@@ -37,6 +38,9 @@ public class MainGame extends Game {
 		gameScreen = new GameScreen(this);
 		gameOverScreen = new GameOverScreen(this);
 		playerScreen=new PlayerScreen(this);
+		nextLevel=new NextLevel(this);
+		gameScreenL2=new GameScreenL2(this);
+		selectLevel=new SelectLevel(this);
 		setScreen(menuScreen);
 	}
 

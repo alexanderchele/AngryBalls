@@ -56,7 +56,7 @@ public class MenuScreen extends BaseScreen {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 // Take me to the game screen!
-                Game.setScreen(Game.gameScreen);
+                Game.setScreen(Game.selectLevel);
             }
         });
 

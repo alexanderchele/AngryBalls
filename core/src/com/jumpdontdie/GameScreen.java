@@ -13,6 +13,7 @@ import com.badlogic.gdx.physics.box2d.Manifold;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.jumpdontdie.entities.EntityFactory;
 import com.jumpdontdie.entities.FloorEntity;
@@ -47,6 +48,8 @@ public class GameScreen extends BaseScreen {
         /** Jump sound that has to play when the player jumps. */
         private Sound jumpSound;
 
+    private Image bandera;
+
         /** Die sound that has to play when the player collides with a spike. */
         private Sound dieSound;
 
@@ -77,6 +80,8 @@ public class GameScreen extends BaseScreen {
             jumpSound = Game.getManager().get("jump.ogg");
             dieSound = Game.getManager().get("die.ogg");
             backgroundMusic = Game.getManager().get("song.ogg");
+
+
         }
 
         /**
@@ -85,32 +90,56 @@ public class GameScreen extends BaseScreen {
          */
         @Override
         public void show() {
+
+           /* bandera = new Image(Game.getManager().get("bandera.png", Texture.class));
+            bandera.setPosition(4500,10);
+            bandera.setSize(150,150);
+            stage.addActor(bandera);
+            */
             EntityFactory factory = new EntityFactory(Game.getManager());
 
             // Create the player. It has an initial position.
             player = factory.createPlayer(world, new Vector2(1.5f, 1.5f));
 
             // This is the main floor. That is why is so long.
+
             floorList.add(factory.createFloor(world, 0, 1000, 1));
 
             // Now generate some floors over the main floor. Needless to say, that on a real game
             // this should be better engineered. For instance, have all the information for floors
             // and spikes in a data structure or even some level file and generate them without
             // writing lines of code.
-            floorList.add(factory.createFloor(world, 15, 10, 2));
-            floorList.add(factory.createFloor(world, 30, 8, 2));
 
-            // Generate some spikes too.
-            spikeList.add(factory.createSpikes(world, 8, 1));
-            spikeList.add(factory.createSpikes(world, 23, 2));
-            spikeList.add(factory.createSpikes(world, 35, 2));
-            spikeList.add(factory.createSpikes(world, 50, 1));
+                floorList.add(factory.createFloor(world, 15, 10, 2));
+                floorList.add(factory.createFloor(world, 30, 8, 2));
+                floorList.add(factory.createFloor(world, 45, 8, 2));
+                floorList.add(factory.createFloor(world, 60, 8, 2));
+                floorList.add(factory.createFloor(world, 65, 3, 3));
+
+                floorList.add(factory.createFloor(world, 100, 3, 2));
+                floorList.add(factory.createFloor(world, 100, 3, 3));
+                floorList.add(factory.createFloor(world, 100, 3, 4));
+                floorList.add(factory.createFloor(world, 100, 3, 5));
+
+                // Generate some spikes too.
+                spikeList.add(factory.createSpikes(world, 8, 1));
+                spikeList.add(factory.createSpikes(world, 23, 2));
+                spikeList.add(factory.createSpikes(world, 35, 2));
+                spikeList.add(factory.createSpikes(world, 50, 2));
+                spikeList.add(factory.createSpikes(world, 70, 1));
+
+
+
 
             // All add the floors and spikes to the stage.
             for (FloorEntity floor : floorList)
                 stage.addActor(floor);
             for (SpikeEntity spike : spikeList)
                 stage.addActor(spike);
+
+                //nuevo mundo
+
+
 
             // Add the player to the stage too.
             stage.addActor(player);
@@ -120,6 +149,8 @@ public class GameScreen extends BaseScreen {
             // use it again if you replay the game.
             stage.getCamera().position.set(position);
             stage.getCamera().update();
+
+
 
             // Everything is ready, turn the volume up.
             backgroundMusic.setVolume(0.75f);
@@ -135,9 +166,10 @@ public class GameScreen extends BaseScreen {
             // Clear the stage. This will remove ALL actors from the stage and it is faster than
             // removing every single actor one by one. This is not shown in the video but it is
             // an improvement.
-            stage.clear();
+
 
             // Detach every entity from the world they have been living in.
+
             player.detach();
             for (FloorEntity floor : floorList)
                 floor.detach();
@@ -145,8 +177,11 @@ public class GameScreen extends BaseScreen {
                 spike.detach();
 
             // Clear the lists.
+
             floorList.clear();
             spikeList.clear();
+
+
         }
 
         /**
@@ -168,10 +203,12 @@ public class GameScreen extends BaseScreen {
             // Make the camera follow the player. As long as the player is alive, if the player is
             // moving, make the camera move at the same speed, so that the player is always
             // centered at the same position.
-            if (player.getX() > 150 && player.isAlive()) {
+            if (player.getX() > 150 && player.isAlive() && player.getX()<4500) {
                 float speed = Constants.PLAYER_SPEED * delta * Constants.PIXELS_IN_METER;
                 stage.getCamera().translate(speed, 0, 0);
             }
+
+
 
            PlayerEntity.Animacion(delta);
 
@@ -253,6 +290,7 @@ public class GameScreen extends BaseScreen {
                         // the other. One action is a delay action. It just waits for 1.5 seconds.
                         // The second actions is a run action. It executes some code. Here, we go
                         // to the game over screen when we die.
+
                         stage.addAction(
                                 Actions.sequence(
                                         Actions.delay(1.5f),
@@ -260,11 +298,15 @@ public class GameScreen extends BaseScreen {
 
                                             @Override
                                             public void run() {
+                                                if(player.getX()<4300)
                                                 Game.setScreen(Game.gameOverScreen);
+                                                else
+                                                    Game.setScreen(Game.nextLevel);
                                             }
                                         })
                                 )
                         );
+
                     }
                 }
             }

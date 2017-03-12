@@ -12,17 +12,17 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
 /**
- * Created by Alexander Caballero on 10/3/2017.
+ * Created by Alexander Caballero on 12/3/2017.
  */
 
-public class GameOverScreen extends BaseScreen{
+public class SelectLevel extends BaseScreen {
     private Stage stage;
     private Skin skin;
-    private Image gameover;
-    private TextButton retry,menu;
-    public GameOverScreen(final MainGame Game) {
-        super(Game);
+    private Image imageLevel;
 
+    private TextButton nivel1, nivel2;
+    public SelectLevel(final MainGame Game) {
+        super(Game);
 
 
         stage = new Stage(new FitViewport(640, 360));
@@ -31,42 +31,40 @@ public class GameOverScreen extends BaseScreen{
         skin = new Skin(Gdx.files.internal("skin/uiskin.json"));
 
 
-        retry = new TextButton("Jugar de nuevo", skin);
-        menu = new TextButton("Menu", skin);
+        nivel1 = new TextButton("Nivel 1(Facil)", skin);
+        nivel2 = new TextButton("Nivel 2 (Difícil)", skin);
 
 
-        gameover = new Image(Game.getManager().get("gameover.png", Texture.class));
+        imageLevel = new Image(Game.getManager().get("gameover.png", Texture.class));
 
-        retry.addCaptureListener(new ChangeListener() {
+        nivel1.addCaptureListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                if(NextLevel.levelControl==1)
+              NextLevel.levelControl=1;
                 Game.setScreen(Game.gameScreen);
-                else
-                    Game.setScreen(Game.gameScreenL2);
 
             }
         });
 
-        menu.addCaptureListener(new ChangeListener() {
+        nivel2.addCaptureListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-
-                Game.setScreen(Game.menuScreen);
+                NextLevel.levelControl=2;
+                Game.setScreen(Game.gameScreenL2);
             }
         });
 
 
-        gameover.setPosition(320 - gameover.getWidth() / 2, 320 - gameover.getHeight());
-        retry.setSize(200, 80);
-        menu.setSize(200, 80);
-        retry.setPosition(60, 50);
-        menu.setPosition(380, 50);
+        imageLevel.setPosition(320 - imageLevel.getWidth() / 2, 320 - imageLevel.getHeight());
+        nivel1.setSize(200, 80);
+        nivel2.setSize(200, 80);
+        nivel1.setPosition(60, 50);
+        nivel2.setPosition(380, 50);
 
 
-        stage.addActor(retry);
-        stage.addActor(gameover);
-        stage.addActor(menu);
+        stage.addActor(nivel1);
+        stage.addActor(imageLevel);
+        stage.addActor(nivel2);
     }
 
     @Override
@@ -98,3 +96,4 @@ public class GameOverScreen extends BaseScreen{
     }
 
 }
+

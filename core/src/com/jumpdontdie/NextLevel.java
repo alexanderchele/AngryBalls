@@ -12,17 +12,17 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
 /**
- * Created by Alexander Caballero on 10/3/2017.
+ * Created by Alexander Caballero on 12/3/2017.
  */
 
-public class GameOverScreen extends BaseScreen{
+public class NextLevel extends BaseScreen {
     private Stage stage;
     private Skin skin;
-    private Image gameover;
-    private TextButton retry,menu;
-    public GameOverScreen(final MainGame Game) {
+    private Image image;
+    public static int levelControl =1;
+    private TextButton next,retry,menu;
+    public NextLevel(final MainGame Game) {
         super(Game);
-
 
 
         stage = new Stage(new FitViewport(640, 360));
@@ -30,21 +30,18 @@ public class GameOverScreen extends BaseScreen{
 
         skin = new Skin(Gdx.files.internal("skin/uiskin.json"));
 
-
+        next = new TextButton("Siguiente Nivel", skin);
         retry = new TextButton("Jugar de nuevo", skin);
         menu = new TextButton("Menu", skin);
 
 
-        gameover = new Image(Game.getManager().get("gameover.png", Texture.class));
+        image = new Image(Game.getManager().get("gameover.png", Texture.class));
 
         retry.addCaptureListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                if(NextLevel.levelControl==1)
+                levelControl=1;
                 Game.setScreen(Game.gameScreen);
-                else
-                    Game.setScreen(Game.gameScreenL2);
-
             }
         });
 
@@ -56,17 +53,29 @@ public class GameOverScreen extends BaseScreen{
             }
         });
 
+        next.addCaptureListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                levelControl=2;
+                Game.setScreen(Game.gameScreenL2);
 
-        gameover.setPosition(320 - gameover.getWidth() / 2, 320 - gameover.getHeight());
-        retry.setSize(200, 80);
-        menu.setSize(200, 80);
-        retry.setPosition(60, 50);
-        menu.setPosition(380, 50);
+            }
+        });
+
+
+        image.setPosition(320 - image.getWidth() / 2, 320 - image.getHeight());
+        retry.setSize(150, 50);
+        menu.setSize(150, 50);
+        next.setSize(150, 50);
+        next.setPosition(50, 50);
+        retry.setPosition(250, 50);
+        menu.setPosition(450, 50);
 
 
         stage.addActor(retry);
-        stage.addActor(gameover);
+        stage.addActor(image);
         stage.addActor(menu);
+        stage.addActor(next);
     }
 
     @Override
@@ -96,5 +105,6 @@ public class GameOverScreen extends BaseScreen{
         stage.act();
         stage.draw();
     }
+
 
 }
