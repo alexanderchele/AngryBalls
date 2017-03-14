@@ -14,6 +14,8 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.jumpdontdie.entities.EntityFactory;
 import com.jumpdontdie.entities.FloorEntity;
@@ -22,6 +24,9 @@ import com.jumpdontdie.entities.SpikeEntity;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.jumpdontdie.LoadingScreen.e2;
+import static com.jumpdontdie.LoadingScreen.r2;
 
 /**
  * Created by Alexander Caballero on 12/3/2017.
@@ -58,6 +63,11 @@ public class GameScreenL2 extends BaseScreen {
     /** Initial position of the camera. Required for reseting the viewport. */
     private Vector3 position;
     private float duracion;
+    private Skin skin;
+    public Label score,record;
+
+
+    public static float posicionX;
 
     public GameScreenL2(MainGame Game) {
         super(Game);
@@ -74,7 +84,15 @@ public class GameScreenL2 extends BaseScreen {
         jumpSound = Game.getManager().get("jump.ogg");
         dieSound = Game.getManager().get("die.ogg");
         backgroundMusic = Game.getManager().get("song.ogg");
+        skin = new Skin(Gdx.files.internal("skin/uiskin.json"));
 
+        score = new Label("Score: ", skin);
+        score.setPosition(0, 320);
+
+        record = new Label("Record: ", skin);
+        record.setPosition(0, 301);
+        stage.addActor(record);
+        stage.addActor(score);
 
     }
 
@@ -138,6 +156,7 @@ public class GameScreenL2 extends BaseScreen {
         // Add the player to the stage too.
         stage.addActor(player);
 
+
         // Reset the camera to the left. This is required because we have translated the camera
         // during the game. We need to put the camera on the initial position so that you can
         // use it again if you replay the game.
@@ -197,11 +216,25 @@ public class GameScreenL2 extends BaseScreen {
         // Make the camera follow the player. As long as the player is alive, if the player is
         // moving, make the camera move at the same speed, so that the player is always
         // centered at the same position.
+        posicionX=player.getX();
         if (player.getX() > 150 && player.isAlive() && player.getX()<4500) {
             float speed = Constants.PLAYER_SPEED * delta * Constants.PIXELS_IN_METER;
             stage.getCamera().translate(speed, 0, 0);
         }
 
+        if(player.isAlive()) {
+            r2 = (int) player.getX() / 2;
+            if(r2 >= e2){
+                e2=r2;
+            }
+            score.setText("Score: " + r2 + " m de "+2250+" m");
+            score.setX(player.getX() - 100);
+
+            record.setText("Record: " + e2);
+            record.setX(player.getX() - 100);
+
+
+        }
 
 
         PlayerEntity.Animacion(delta);
@@ -292,10 +325,12 @@ public class GameScreenL2 extends BaseScreen {
 
                                         @Override
                                         public void run() {
-                                            if(player.getX()<3400)
+                                            if(player.getX()<4300) {
+
                                                 Game.setScreen(Game.gameOverScreen);
+                                            }
                                             else
-                                                Game.setScreen(Game.nextLevel);
+                                                Game.setScreen(Game.endGameScreen);
                                         }
                                     })
                             )

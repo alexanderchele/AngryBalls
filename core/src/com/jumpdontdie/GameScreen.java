@@ -14,6 +14,8 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.jumpdontdie.entities.EntityFactory;
 import com.jumpdontdie.entities.FloorEntity;
@@ -22,6 +24,9 @@ import com.jumpdontdie.entities.SpikeEntity;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.jumpdontdie.LoadingScreen.e;
+import static com.jumpdontdie.LoadingScreen.r;
 
 /**
  * Created by Alexander Caballero on 9/3/2017.
@@ -59,6 +64,9 @@ public class GameScreen extends BaseScreen {
         /** Initial position of the camera. Required for reseting the viewport. */
         private Vector3 position;
         private float duracion;
+        public Label score,record;
+
+    private Skin skin;
         /**
          * Create the screen. Since this constructor cannot be invoked before libGDX is fully started,
          * it is safe to do critical code here such as loading assets and setting up the stage.
@@ -80,6 +88,19 @@ public class GameScreen extends BaseScreen {
             jumpSound = Game.getManager().get("jump.ogg");
             dieSound = Game.getManager().get("die.ogg");
             backgroundMusic = Game.getManager().get("song.ogg");
+
+            skin = new Skin(Gdx.files.internal("skin/uiskin.json"));
+
+            score = new Label("Score: ", skin);
+            score.setPosition(0, 320);
+            stage.addActor(score);
+
+            record = new Label("Record: ", skin);
+            record.setPosition(0, 301);
+            stage.addActor(record);
+
+            // Create some loading text using this skin file and position it on screen.
+
 
 
         }
@@ -140,7 +161,6 @@ public class GameScreen extends BaseScreen {
                 //nuevo mundo
 
 
-
             // Add the player to the stage too.
             stage.addActor(player);
 
@@ -182,6 +202,7 @@ public class GameScreen extends BaseScreen {
             spikeList.clear();
 
 
+
         }
 
         /**
@@ -207,10 +228,21 @@ public class GameScreen extends BaseScreen {
                 float speed = Constants.PLAYER_SPEED * delta * Constants.PIXELS_IN_METER;
                 stage.getCamera().translate(speed, 0, 0);
             }
+            if(player.isAlive()) {
+                 r = (int) player.getX() / 2;
+                if(r >= e){
+                    e=r;
+                }
+                    score.setText("Score: " + r + " m de "+2250+" m");
+                    score.setX(player.getX() - 100);
+
+                    record.setText("Record: " + e);
+                    record.setX(player.getX() - 100);
 
 
+            }
 
-           PlayerEntity.Animacion(delta);
+                PlayerEntity.Animacion(delta);
 
 
 
@@ -294,7 +326,8 @@ public class GameScreen extends BaseScreen {
                         stage.addAction(
                                 Actions.sequence(
                                         Actions.delay(1.5f),
-                                        Actions.run(new Runnable() {
+                                        Actions.run
+                                                (new Runnable() {
 
                                             @Override
                                             public void run() {

@@ -16,6 +16,7 @@ public class LoadingScreen extends BaseScreen {
     private Stage stage;
     private Skin skin;
     private Label loading;
+    public static int e=0,r=0,e2=0,r2=0;
     public LoadingScreen(MainGame Game) {
         super(Game);
 
