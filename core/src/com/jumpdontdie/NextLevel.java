@@ -35,7 +35,7 @@ public class NextLevel extends BaseScreen {
         menu = new TextButton("Menu", skin);
 
 
-        image = new Image(Game.getManager().get("gameover.png", Texture.class));
+        image = new Image(Game.getManager().get("logoNivelCompletado.png", Texture.class));
 
         retry.addCaptureListener(new ChangeListener() {
             @Override
@@ -63,14 +63,14 @@ public class NextLevel extends BaseScreen {
         });
 
 
-        image.setPosition(320 - image.getWidth() / 2, 320 - image.getHeight());
+        image.setPosition(320 - image.getWidth() / 2, next.getY() + image.getHeight()+20);
         retry.setSize(150, 50);
         menu.setSize(150, 50);
         next.setSize(150, 50);
         next.setPosition(50, 50);
         retry.setPosition(250, 50);
         menu.setPosition(450, 50);
-
+        image.setPosition(320 - image.getWidth() / 2, 100);
 
         stage.addActor(retry);
         stage.addActor(image);
@@ -100,7 +100,7 @@ public class NextLevel extends BaseScreen {
     @Override
     public void render(float delta) {
         // Just render things.
-        Gdx.gl.glClearColor(0.2f, 0.3f, 0.5f, 1f);
+        Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         stage.act();
         stage.draw();

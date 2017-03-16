@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Contact;
@@ -91,6 +92,11 @@ public class GameScreen extends BaseScreen {
 
             skin = new Skin(Gdx.files.internal("skin/uiskin.json"));
 
+            bandera = new Image(Game.getManager().get("bandera.png", Texture.class));
+            bandera.setPosition(4300,10);
+            bandera.setSize(150,150);
+            stage.addActor(bandera);
+
             score = new Label("Score: ", skin);
             score.setPosition(0, 320);
             stage.addActor(score);
@@ -112,11 +118,11 @@ public class GameScreen extends BaseScreen {
         @Override
         public void show() {
 
-           /* bandera = new Image(Game.getManager().get("bandera.png", Texture.class));
+           bandera = new Image(Game.getManager().get("bandera.png", Texture.class));
             bandera.setPosition(4500,10);
             bandera.setSize(150,150);
             stage.addActor(bandera);
-            */
+
             EntityFactory factory = new EntityFactory(Game.getManager());
 
             // Create the player. It has an initial position.
@@ -137,10 +143,10 @@ public class GameScreen extends BaseScreen {
                 floorList.add(factory.createFloor(world, 60, 8, 2));
                 floorList.add(factory.createFloor(world, 65, 3, 3));
 
-                floorList.add(factory.createFloor(world, 100, 3, 2));
-                floorList.add(factory.createFloor(world, 100, 3, 3));
-                floorList.add(factory.createFloor(world, 100, 3, 4));
-                floorList.add(factory.createFloor(world, 100, 3, 5));
+                floorList.add(factory.createFloor(world, 100, 10, 2));
+                floorList.add(factory.createFloor(world, 100, 10, 3));
+                floorList.add(factory.createFloor(world, 100, 10, 4));
+                floorList.add(factory.createFloor(world, 100, 10, 5));
 
                 // Generate some spikes too.
                 spikeList.add(factory.createSpikes(world, 8, 1));
@@ -233,7 +239,7 @@ public class GameScreen extends BaseScreen {
                 if(r >= e){
                     e=r;
                 }
-                    score.setText("Score: " + r + " m de "+2250+" m");
+                    score.setText("Score: " + r + " m de "+2223+" m");
                     score.setX(player.getX() - 100);
 
                     record.setText("Record: " + e);
@@ -333,8 +339,11 @@ public class GameScreen extends BaseScreen {
                                             public void run() {
                                                 if(player.getX()<4300)
                                                 Game.setScreen(Game.gameOverScreen);
-                                                else
+                                                else {
+                                                    LoadingScreen.nivelDesbloqueado=2;
                                                     Game.setScreen(Game.nextLevel);
+                                                }
+
                                             }
                                         })
                                 )

@@ -2,6 +2,7 @@ package com.jumpdontdie;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
@@ -33,7 +34,7 @@ public class EndGameScreen extends BaseScreen{
         menu = new TextButton("Menu", skin);
 
 
-       // imagenfin = new Image(Game.getManager().get("gameover.png", Texture.class));
+        imagenfin = new Image(Game.getManager().get("logoJuegoCompletado.png", Texture.class));
 
         retry.addCaptureListener(new ChangeListener() {
             @Override
@@ -55,15 +56,15 @@ public class EndGameScreen extends BaseScreen{
         });
 
 
-        //imagenfin.setPosition(320 - imagenfin.getWidth() / 2, 320 - imagenfin.getHeight());
-        retry.setSize(200, 80);
-        menu.setSize(200, 80);
+        imagenfin.setPosition(320 - imagenfin.getWidth() / 2, 110);
+        retry.setSize(200, 50);
+        menu.setSize(200, 50);
         retry.setPosition(60, 50);
         menu.setPosition(380, 50);
 
 
         stage.addActor(retry);
-       // stage.addActor(imagenfin);
+        stage.addActor(imagenfin);
         stage.addActor(menu);
     }
 
@@ -89,7 +90,7 @@ public class EndGameScreen extends BaseScreen{
     @Override
     public void render(float delta) {
         // Just render things.
-        Gdx.gl.glClearColor(0.2f, 0.3f, 0.5f, 1f);
+        Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         stage.act();
         stage.draw();

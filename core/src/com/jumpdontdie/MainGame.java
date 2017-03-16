@@ -22,7 +22,11 @@ public class MainGame extends Game {
 		manager.load("bola2.png", Texture.class);
 		manager.load("bola3.png", Texture.class);
 		manager.load("bandera.png", Texture.class);
-		manager.load("logo.png", Texture.class);
+		manager.load("logoInicio.png", Texture.class);
+		manager.load("logoElegirNivel.png", Texture.class);
+		manager.load("logoSelecionarJugador.png", Texture.class);
+		manager.load("logoNivelCompletado.png", Texture.class);
+		manager.load("logoJuegoCompletado.png", Texture.class);
 		manager.load("die.ogg", Sound.class);
 		manager.load("jump.ogg", Sound.class);
 		manager.load("song.ogg", Music.class);

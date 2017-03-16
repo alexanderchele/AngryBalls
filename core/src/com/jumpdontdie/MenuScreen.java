@@ -47,7 +47,7 @@ public class MenuScreen extends BaseScreen {
 
         // Also, create an image. Images are actors that only display some texture. Useful if you
         // want to display a texture in a Scene2D based screen but you don't want to rewrite code.
-        logo = new Image(Game.getManager().get("logo.png", Texture.class));
+        logo = new Image(Game.getManager().get("logoInicio.png", Texture.class));
 
         // Add capture listeners. Capture listeners have one method, changed, that is executed
         // when the button is pressed or when the user interacts somehow with the widget. They are
@@ -56,7 +56,9 @@ public class MenuScreen extends BaseScreen {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 // Take me to the game screen!
+                if(LoadingScreen.nivelDesbloqueado==2)
                 Game.setScreen(Game.selectLevel);
+                else Game.setScreen(Game.gameScreen);
             }
         });
 
@@ -109,7 +111,8 @@ public class MenuScreen extends BaseScreen {
 
     @Override
     public void render(float delta) {
-        Gdx.gl.glClearColor(0.2f, 0.3f, 0.5f, 1f);
+        Gdx.gl.glClearColor(0, 0, 0, 1);
+
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         stage.act();
         stage.draw();

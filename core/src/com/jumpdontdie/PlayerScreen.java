@@ -18,7 +18,7 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 public class PlayerScreen extends BaseScreen {
     private Stage stage;
     private Skin skin;
-    private Image bolaFubol,bolaBaseball,bolaBillar;
+    private Image bolaFubol,bolaBaseball,bolaBillar, imageJugador;
     public static int controlPlayer=1;
     private TextButton botonBola1,botonBola2,botonBola3;
     public PlayerScreen(final MainGame Game) {
@@ -38,6 +38,7 @@ public class PlayerScreen extends BaseScreen {
         bolaFubol = new Image(Game.getManager().get("bola1.png", Texture.class));
         bolaBaseball = new Image(Game.getManager().get("bola2.png", Texture.class));
         bolaBillar = new Image(Game.getManager().get("bola3.png", Texture.class));
+        imageJugador = new Image(Game.getManager().get("logoSelecionarJugador.png", Texture.class));
 
         botonBola1.addCaptureListener(new ChangeListener() {
             @Override
@@ -79,11 +80,12 @@ public class PlayerScreen extends BaseScreen {
         botonBola1.setPosition(50, 50);
         botonBola2.setPosition(250, 50);
         botonBola3.setPosition(450, 50);
-
+        imageJugador.setPosition(320 - imageJugador.getWidth() / 2, 240);
 
         stage.addActor(bolaFubol);
         stage.addActor(bolaBaseball);
         stage.addActor(bolaBillar);
+        stage.addActor(imageJugador);
 
         stage.addActor(botonBola1);
         stage.addActor(botonBola2);
@@ -112,7 +114,7 @@ public class PlayerScreen extends BaseScreen {
     @Override
     public void render(float delta) {
         // Just render things.
-        Gdx.gl.glClearColor(0.4f, 0.5f, 0.8f, 1f);
+        Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         stage.act();
         stage.draw();
